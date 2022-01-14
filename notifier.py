@@ -1,15 +1,17 @@
+from json import load
+import os
 import requests
-import json
 import time
 import winsound
+from dotenv import load_dotenv
+
+load_dotenv('./.env')
 
 prev = list()
-
 # timer loop starts
 
 while True:
     curr = list()
-
     req = requests.get(
         "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=392&date=14-01-2022")
     data = req.json()
@@ -48,12 +50,11 @@ while True:
         winsound.Beep(2500, 2000)
 
     for item in difference:
-        print("Name:", item['Name'])
-        print("Address:", item['Address'])
-        print("Pincode:", item['Pincode'])
-        print("Vaccine:", item['Vaccine'])
-        print("Cost:", item['Cost'])
-        print("Dose 3:", item['Dose 3'])
-        prev.append(item)
+        message = f"Name: {item['Name']}\nAddress: {item['Address']}\nPincode: {item['Pincode']}\nVaccine: {item['Vaccine'] }\nCost:{item['Cost']}\nDose 3: {item['Dose 3']}"
 
-    time.sleep(50)
+        req = requests.get(
+            f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage?chat_id={os.getenv('CHAT_ID')}&text={message}")
+
+        response = req.json()
+        prev.append(item)
+    time.sleep(42)
