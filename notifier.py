@@ -1,18 +1,18 @@
-import os
 import requests
 import time
 import winsound
 from dotenv import load_dotenv
+from telegram import send_message
 
-load_dotenv('./.env')
+load_dotenv()
 
 prev = list()
-# timer loop starts
 
+# timer loop starts
 while True:
     curr = list()
     req = requests.get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=392&date=14-01-2022")
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=392&date=17-01-2022")
     data = req.json()
 
     print("\n=========================================================================================================\n")
@@ -45,15 +45,24 @@ while True:
         if found == 0:
             difference.append(item)
 
-    if len(difference) >= 1:
-        winsound.Beep(2500, 2000)
+    # if len(difference) >= 1:
+    #     winsound.Beep(2500, 2000)
+    message_counter = 0
 
-    for item in difference:
-        message = f"Name: {item['Name']}\nAddress: {item['Address']}\nPincode: {item['Pincode']}\nVaccine: {item['Vaccine'] }\nCost:{item['Cost']}\nDose 3: {item['Dose 3']}"
+    with open('prev.txt', 'w+') as f:
+        for item in difference:
+            message_counter += 1
+            message = f"Name: {item['Name']}\n\nAddress: {item['Address']}\n\nPincode: {item['Pincode']}\nVaccine: {item['Vaccine'] }\n\nCost: {item['Cost']}\nDose 3: {item['Dose 3']}"
+            if message_counter % 20 == 0:
+                time.sleep(40)
+            else:
+                send_message(message)
 
-        req = requests.get(
-            f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage?chat_id={os.getenv('CHAT_ID')}&text={message}")
+            prev.append(item)
+            f.write('%s\n' % item)
 
-        response = req.json()
-        prev.append(item)
-    time.sleep(42)
+    send_message(
+        "This channel is in testing phase. Do not join this channel for now")
+
+    if message_counter < 20:
+        time.sleep(42 - message_counter)
