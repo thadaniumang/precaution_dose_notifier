@@ -12,7 +12,7 @@ prev = list()
 while True:
     curr = list()
     req = requests.get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=392&date=17-01-2022")
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=392&date=21-01-2022")
     data = req.json()
 
     print("\n=========================================================================================================\n")
@@ -45,14 +45,12 @@ while True:
         if found == 0:
             difference.append(item)
 
-    # if len(difference) >= 1:
-    #     winsound.Beep(2500, 2000)
     message_counter = 0
 
     with open('prev.txt', 'w+') as f:
         for item in difference:
             message_counter += 1
-            message = f"Name: {item['Name']}\n\nAddress: {item['Address']}\n\nPincode: {item['Pincode']}\nVaccine: {item['Vaccine'] }\n\nCost: {item['Cost']}\nDose 3: {item['Dose 3']}"
+            message = f"Name: {item['Name']}\n\nAddress: {item['Address']}\n\nPincode: {item['Pincode']}\nVaccine: {item['Vaccine'] }\n\nCost: {item['Cost']}\nDose 3: {item['Dose 3']}\nBook yout slot: <a href='https://selfregistration.cowin.gov.in/'>https://selfregistration.cowin.gov.in/</a>"
             if message_counter % 20 == 0:
                 time.sleep(40)
             else:
